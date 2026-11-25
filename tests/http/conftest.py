@@ -23,15 +23,16 @@
 ###########################################################################
 #
 import logging
-import os
 import platform
 import sys
-from typing import Generator, Union
+from collections.abc import Generator
+from pathlib import Path
+from typing import Union
 
 import pytest
 from testenv.env import EnvConfig
 
-sys.path.append(os.path.join(os.path.dirname(__file__), "."))
+sys.path.append(str(Path(__file__).resolve().parent))
 
 from testenv import (
     Dante,
@@ -71,9 +72,9 @@ def pytest_report_header(config):
         report.extend([f"  sshd: {env.sshd_version()}"])
     if env.has_vsftpd():
         report.extend([f"  VsFTPD: {env.vsftpd_version()}"])
-    buildinfo_fn = os.path.join(env.build_dir, "buildinfo.txt")
-    if os.path.exists(buildinfo_fn):
-        with open(buildinfo_fn, "r") as file_in:
+    buildinfo_fn = Path(env.build_dir) / "buildinfo.txt"
+    if buildinfo_fn.exists():
+        with buildinfo_fn.open("r") as file_in:
             for line in file_in:
                 line = line.strip()
                 if line and not line.startswith("#"):
