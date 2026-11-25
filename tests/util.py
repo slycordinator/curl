@@ -23,8 +23,8 @@
 """Module for extracting test data from the test data folder and other utils."""
 
 import logging
-import os
 import re
+from pathlib import Path
 
 log = logging.getLogger(__name__)
 
@@ -34,11 +34,11 @@ REPLY_DATA = re.compile("<reply>[ \t\n\r]*<data[^<]*>(.*?)</data>", re.MULTILINE
 class ClosingFileHandler(logging.StreamHandler):
     def __init__(self, filename):
         super().__init__()
-        self.filename = os.path.abspath(filename)
+        self.filename = Path(filename).resolve()
         self.setStream(None)
 
     def emit(self, record):
-        with open(self.filename, "a") as fp:
+        with self.filename.open("a") as fp:
             self.setStream(fp)
             super().emit(record)
             self.setStream(None)
@@ -62,15 +62,15 @@ class ClosingFileHandler(logging.StreamHandler):
 
 class TestData:
     def __init__(self, data_folder):
-        self.data_folder = data_folder
+        self.data_folder = Path(data_folder)
 
     def get_test_data(self, test_number):
         # Create the test filename
-        filename = os.path.join(self.data_folder, f"test{test_number}")
+        filename = self.data_folder / f"test{test_number}"
 
         log.debug("Parsing file %s", filename)
 
-        with open(filename, "r", encoding='us-ascii') as f:
+        with filename.open("r", encoding='us-ascii') as f:
             contents = f.read()
 
         m = REPLY_DATA.search(contents)
