@@ -29,6 +29,7 @@ import argparse
 import logging
 import os
 import sys
+from pathlib import Path
 
 from util import ClosingFileHandler
 
@@ -53,7 +54,7 @@ def dictserver(options):
         # see tests/server/util.c function write_pidfile
         if os.name == "nt":
             pid += 4194304
-        with open(options.pidfile, "w") as f:
+        with Path(options.pidfile).open("w") as f:
             f.write(str(pid))
 
     local_bind = (options.host, options.port)
@@ -176,8 +177,8 @@ if __name__ == '__main__':
         log.exception('Error running server')
         rc = ScriptRC.EXCEPTION
 
-    if options.pidfile and os.path.isfile(options.pidfile):
-        os.unlink(options.pidfile)
+    if options.pidfile:
+        Path(options.pidfile).unlink(missing_ok=True)
 
     log.info("[DICT] Returning %d", rc)
     sys.exit(rc)
