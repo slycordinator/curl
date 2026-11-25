@@ -31,7 +31,7 @@ import os
 import re
 import sys
 from statistics import mean
-from typing import Any, Dict, List, Optional
+from typing import Any, Optional
 
 from testenv import (
     Caddy,
@@ -244,7 +244,7 @@ class ScoreRunner:
                  upload_parallel: int = 0,
                  server_addr: Optional[str] = None,
                  with_flame: bool = False,
-                 socks_args: Optional[List[str]] = None,
+                 socks_args: Optional[list[str]] = None,
                  limit_rate: Optional[str] = None,
                  http_plain: bool = False,
                  suppress_cl: bool = False):
@@ -302,7 +302,7 @@ class ScoreRunner:
                           with_flame=self._with_flame,
                           socks_args=self._socks_args)
 
-    def handshakes(self) -> Dict[str, Any]:
+    def handshakes(self) -> dict[str, Any]:
         props = {}
         sample_size = 5
         self.info('TLS Handshake\n')
@@ -347,7 +347,7 @@ class ScoreRunner:
         return fpath
 
     def setup_resources(self, server_docs: str,
-                        downloads: Optional[List[int]] = None):
+                        downloads: Optional[list[int]] = None):
         if downloads is not None:
             for fsize in downloads:
                 label = Card.fmt_size(fsize)
@@ -462,7 +462,7 @@ class ScoreRunner:
             return Card.mk_speed_cell(samples, profiles, errors, self._limit_rate_num)
         return Card.mk_mbs_cell(samples, profiles, errors)
 
-    def downloads(self, count: int, fsizes: List[int], meta: Dict[str, Any]) -> Dict[str, Any]:
+    def downloads(self, count: int, fsizes: list[int], meta: dict[str, Any]) -> dict[str, Any]:
         nsamples = meta['samples']
         max_parallel = self._download_parallel if self._download_parallel > 0 else count
         cols = ['size']
@@ -613,7 +613,7 @@ class ScoreRunner:
                 profiles.append(r.profile)
         return Card.mk_mbs_cell(samples, profiles, errors)
 
-    def uploads(self, count: int, fsizes: List[int], meta: Dict[str, Any]) -> Dict[str, Any]:
+    def uploads(self, count: int, fsizes: list[int], meta: dict[str, Any]) -> dict[str, Any]:
         nsamples = meta['samples']
         max_parallel = self._upload_parallel if self._upload_parallel > 0 else count
         cols = ['size']
@@ -695,7 +695,7 @@ class ScoreRunner:
             profiles.append(r.profile)
         return Card.mk_reqs_cell(samples, profiles, errors)
 
-    def requests(self, count: int, meta: Dict[str, Any]) -> Dict[str, Any]:
+    def requests(self, count: int, meta: dict[str, Any]) -> dict[str, Any]:
         url = f'{self._scheme}://{self._domain}:{self.server_port}/reqs10.data'
         fsize = 10 * 1024
         cols = ['size', 'total']
@@ -731,9 +731,9 @@ class ScoreRunner:
 
     def score(self,
               handshakes: bool = True,
-              downloads: Optional[List[int]] = None,
+              downloads: Optional[list[int]] = None,
               download_count: int = 50,
-              uploads: Optional[List[int]] = None,
+              uploads: Optional[list[int]] = None,
               upload_count: int = 50,
               req_count=5000,
               request_parallels=None,
