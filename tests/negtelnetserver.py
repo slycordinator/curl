@@ -28,6 +28,7 @@ import os
 import socket
 import socketserver
 import sys
+from pathlib import Path
 
 from util import ClosingFileHandler
 
@@ -40,14 +41,14 @@ VERIFIED_REQ = "verifiedserver"
 VERIFIED_RSP = "WE ROOLZ: {pid}"
 
 
-def telnetserver(options):
+def telnetserver(options: argparse.Namespace):
     """Start up a TCP server with a telnet handler and serve DICT requests forever."""
     if options.pidfile:
         pid = os.getpid()
         # see tests/server/util.c function write_pidfile
         if os.name == "nt":
             pid += 4194304
-        with open(options.pidfile, "w") as f:
+        with Path(options.pidfile).open("w") as f:
             f.write(str(pid))
 
     local_bind = (HOST, options.port)
@@ -351,8 +352,8 @@ if __name__ == '__main__':
         log.exception('Error in telnet server')
         rc = ScriptRC.EXCEPTION
 
-    if options.pidfile and os.path.isfile(options.pidfile):
-        os.unlink(options.pidfile)
+    if options.pidfile:
+        Path(options.pidfile).unlink(missing_ok=True)
 
     log.info("Returning %d", rc)
     sys.exit(rc)
